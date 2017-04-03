@@ -1,0 +1,49 @@
+<div>
+
+  <div>
+    <h4>Here are the details for <%= user_hash["name"] %>:</h4>
+  </div>
+
+  <div class="padding">
+    <table>
+      <tr>
+        <td class="wide"><b>Name: </b></td>
+        <td class="wide"><%= user_hash["name"] %></td>
+      </tr>
+      <tr>
+        <td class="wide"><b>Age: </b></td>
+        <td class="wide"><%= user_hash["age"] %></td>
+      </tr>
+      <tr>
+        <td class="wide"><b>Favorite Number 1: </b></td>
+        <td class="wide"><%= user_hash["num_1"] %></td>
+      </tr>
+      <tr>
+        <td class="wide"><b>Favorite Number 2: </b></td>
+        <td class="wide"><%= user_hash["num_2"] %></td>
+      </tr>
+      <tr>
+        <td class="wide"><b>Favorite Number 3: </b></td>
+        <td class="wide"><%= user_hash["num_3"] %></td>
+      </tr>
+      <tr>
+        <td class="wide"><b>Quote: </b></td>
+        <td class="wide"><%= user_hash["quote"] %></td>
+      </tr>
+    </table>
+  </div>
+
+  <hr>
+
+  <div>
+    <h4>What would you like to do next?</h4>
+    <div class="padding">
+      <p><a href = "/">Enter info for someone else</a></p>
+      <p><a href = "/list_users">View info for someone else</a></p>
+    </div>
+  </div>
+
+  <hr>
+
+
+</div>
