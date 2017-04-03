@@ -133,12 +133,98 @@ def write_db(user_hash)
   end
 end
 
+# Method to identify which column contains the specified value
+def match_column(value)
+  begin
+    columns = ["name", "num_1", "quote"]
+    target = ""
+    conn = open_db() # open database for updating
+    columns.each do |column|  # determine which column contains the specified value
+      query = "select " + column +
+              " from details
+               join numbers on details.id = numbers.details_id
+               join quotes on details.id = quotes.details_id"
+      conn.prepare('q_statement', query)
+      rs = conn.exec_prepared('q_statement')
+      conn.exec("deallocate q_statement")
+      results = rs.values.flatten
+      target = column if results.include? value
+    end
+    return target
+  rescue PG::Error => e
+    puts 'Exception occurred'
+    puts e.message
+  ensure
+    conn.close if conn
+  end
+end
+
+
+=begin
+
+# Method to return hash of all values for record associated with specified value
+def pull_record(value)
+  begin
+
+    conn = open_db()
+    table = match_table(column)  # determine which table contains the specified column
+    conn.prepare('q_statement',
+                 "select *
+                  from details
+                  join numbers on details.id = numbers.details_id
+                  join quotes on details.id = quotes.details_id
+                  where details.name = '#{user_name}'")
+    user_hash = conn.exec_prepared('q_statement')
+    conn.exec("deallocate q_statement")
+    return user_hash[0]
+
+
+      v_quote = user_hash["quote"]
+      conn.prepare('q_statement',
+                   "insert into details (id, name, age)
+                    values($1, $2, $3)")  # bind parameters
+      conn.exec_prepared('q_statement', [v_id, v_name, v_age])
+      conn.exec("deallocate q_statement")
+
+
+      query = "update " + table + " set " + column + " = $2 where id = $1"
+      conn.prepare('q_statement', query)
+      rs = conn.exec_prepared('q_statement', [id, value])
+
+
+    query = 
+
+    # id = columns["id"]  # determine the id for the current record
+    # conn = PG.connect(dbname: 'test', user: 'something', password: '4321')
+    # columns.each do |column, value|  # iterate through columns hash for each column/value pair
+    #   unless column == "id"  # we do NOT want to update the id
+    #     table = match_table(column)  # determine which table contains the specified column
+    #     # workaround for table name being quoted and column name used as bind parameter
+    #     query = "update " + table + " set " + column + " = $2 where id = $1"
+    #     conn.prepare('q_statement', query)
+    #     rs = conn.exec_prepared('q_statement', [id, value])
+    #     conn.exec("deallocate q_statement")
+    #   end
+    # end
+
+  rescue PG::Error => e
+    puts 'Exception occurred'
+    puts e.message
+  ensure
+    conn.close if conn
+  end
+end
+
+=end
+
+
+
 # Method to identify which table contains the specified column
 def match_table(column)
   begin
     tables = ["details", "numbers", "quotes"]
     target = ""
-    conn = PG.connect(dbname: 'test', user: 'something', password: '4321')
+    conn = open_db() # open database for updating
     tables.each do |table|  # determine which table contains the specified column
       conn.prepare('q_statement',
                    "select column_name
@@ -164,7 +250,7 @@ end
 def update_values(columns)
   begin
     id = columns["id"]  # determine the id for the current record
-    conn = PG.connect(dbname: 'test', user: 'something', password: '4321')
+    conn = open_db() # open database for updating
     columns.each do |column, value|  # iterate through columns hash for each column/value pair
       unless column == "id"  # we do NOT want to update the id
         table = match_table(column)  # determine which table contains the specified column
@@ -213,3 +299,7 @@ end
 
 # update_values(hash_1)
 # update_values(hash_2)
+
+p match_column("John")
+p match_column("If you fell down yesterday, stand up today.")
+p match_column("11")
