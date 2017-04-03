@@ -17,7 +17,7 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
 
   post '/post_info' do
     user_hash = params[:user]  # assign the user hash to the user_hash variable
-    feedback = check_values(user_hash)  # check to see if user is already in SQLite db
+    feedback = check_values(user_hash)  # check to see if user is already in PostgreSQL db
     write_db(user_hash)  # if not, add user info to db
     name = user_hash["name"]  # user name from the resulting hash
     age = user_hash["age"]  # user age from the resulting hash
@@ -36,7 +36,7 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
   end
 
   get '/list_users' do
-    names = get_names()  # get an array of all of the user names in SQLite db
+    names = get_names()  # get an array of all of the user names in PostgreSQL db
     erb :list_users, locals: {names: names}
   end
 
