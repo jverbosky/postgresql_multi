@@ -1,9 +1,18 @@
 require 'pg'
+load "./local_env.rb" if File.exists?("./local_env.rb")
 
 # Method to open a connection to the PostgreSQL database
 def open_db()
   begin
-    conn = PG.connect(dbname: 'test', user: 'something', password: '4321')
+    # connect to the database
+    db_params = {
+          host: ENV['host'],  # AWS link
+          port:ENV['port'],  # AWS port, always 5432
+          dbname:ENV['dbname'],
+          user:ENV['dbuser'],
+          password:ENV['dbpassword']
+        }
+    conn = PG::Connection.new(db_params)
   rescue PG::Error => e
     puts 'Exception occurred'
     puts e.message
