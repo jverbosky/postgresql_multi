@@ -51,13 +51,19 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
   end
 
   get '/get_search' do
-    erb :search
+    feedback = ""
+    erb :search, locals: {feedback: feedback}
   end
 
   post '/search_results' do
     value = params[:value]
     results = pull_records(value)  # get array of hashes for all matching records
-    erb :search_results, locals: {results: results}
+    feedback = results[0]["quote"]
+    if feedback == "No matching record - please try again."
+      erb :search, locals: {feedback: feedback}
+    else
+      erb :search_results, locals: {results: results}
+    end
   end
 
   get '/get_update' do

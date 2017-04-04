@@ -177,7 +177,7 @@ def pull_records(value)
       rs.each { |result| results.push(result) }
       return results
     else
-      return {"value" => "No matching record - please try again."}
+      return [{"quote" => "No matching record - please try again."}]
     end
   rescue PG::Error => e
     puts 'Exception occurred'
@@ -278,13 +278,14 @@ end
 # p match_column("nothing")  #  ""
 
 # p pull_records("John")
-# {"id"=>"1", "name"=>"John", "age"=>"41", "details_id"=>"1", "n1"=>"7", "n2"=>"11", "n3"=>"3", "quote"=>"Research is what I'm doing when I don't know what I'm doing."}
+# [{"id"=>"1", "name"=>"John", "age"=>"41", "details_id"=>"1", "n1"=>"7", "n2"=>"11", "n3"=>"3", "quote"=>"Research is what I'm doing when I don't know what I'm doing."}]
 
 # p pull_records("If you fell down yesterday, stand up today.")
-# {"id"=>"6", "name"=>"Jen", "age"=>"91", "details_id"=>"6", "n1"=>"2", "n2"=>"4", "n3"=>"6", "quote"=>"If you fell down yesterday, stand up today."}
+# [{"id"=>"6", "name"=>"Jen", "age"=>"91", "details_id"=>"6", "n1"=>"2", "n2"=>"4", "n3"=>"6", "quote"=>"If you fell down yesterday, stand up today."}]
 
-# p pull_records("11")
-# {"id"=>"4", "name"=>"Jill", "age"=>"71", "details_id"=>"4", "n1"=>"11", "n2"=>"22", "n3"=>"33", "quote"=>"It does not matter how slowly you go as long as you do not stop."}
+# p pull_records("10")
+# [{"id"=>"3", "name"=>"Jim", "age"=>"61", "details_id"=>"3", "n1"=>"10", "n2"=>"20", "n3"=>"30", "quote"=>"In order to succeed, we must first believe that we can."}, 
+#  {"id"=>"9", "name"=>"Joni", "age"=>"40", "details_id"=>"9", "n1"=>"10", "n2"=>"50", "n3"=>"80", "quote"=>"Think big."}]
 
 # p pull_records("nothing")
-# {"value"=>"No matching record - please try again."}
+# [{"quote"=>"No matching record - please try again."}]
