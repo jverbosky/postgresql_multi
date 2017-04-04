@@ -4,6 +4,10 @@ require_relative 'postgresql_ops.rb'
 class PersonalDetailsPostgreSQLApp < Sinatra::Base
 
   get "/" do
+    erb :start
+  end
+
+  get "/get_info" do
     feedback = ""  # placeholders in this route to avoid error message
     name = ""
     age = ""
@@ -45,5 +49,17 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
     user_hash = get_data(name)  # get the hash of info for the specified user
     erb :user_info, locals: {user_hash: user_hash}
   end
+
+  get '/get_search' do
+    erb :search
+  end
+
+  post '/post_search' do
+    value = params[:value]
+    results = pull_record(value)
+    "Results hash: #{results}"
+    # erb :search_results
+  end
+
 
 end

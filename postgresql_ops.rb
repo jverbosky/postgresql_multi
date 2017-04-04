@@ -148,7 +148,7 @@ def match_column(value)
       rs = conn.exec_prepared('q_statement')
       conn.exec("deallocate q_statement")
       results = rs.values.flatten
-      target = column if results.include? value
+      (results.include? value) ? (return column) : (target = "")
     end
     return target
   rescue PG::Error => e
@@ -163,16 +163,20 @@ end
 def pull_record(value)
   begin
     column = match_column(value)  # determine which column contains the specified value
-    conn = open_db()
-    query = "select *
-             from details
-             join numbers on details.id = numbers.details_id
-             join quotes on details.id = quotes.details_id
-             where " + column + " = $1"  # bind parameter
-    conn.prepare('q_statement', query)
-    rs = conn.exec_prepared('q_statement', [value])
-    conn.exec("deallocate q_statement")
-    return rs[0]
+    unless column == ""
+      conn = open_db()
+      query = "select *
+               from details
+               join numbers on details.id = numbers.details_id
+               join quotes on details.id = quotes.details_id
+               where " + column + " = $1"  # bind parameter
+      conn.prepare('q_statement', query)
+      rs = conn.exec_prepared('q_statement', [value])
+      conn.exec("deallocate q_statement")
+      return rs[0]
+    else
+      return {"value" => "No matching record - please try again."}
+    end
   rescue PG::Error => e
     puts 'Exception occurred'
     puts e.message
@@ -265,6 +269,7 @@ end
 # p match_column("John")  # "name"
 # p match_column("If you fell down yesterday, stand up today.")  # "quote"
 # p match_column("11")  # "num_1"
+# p match_column("nothing")  #  ""
 
 # p pull_record("John")
 # {"id"=>"1", "name"=>"John", "age"=>"41", "details_id"=>"1", "num_1"=>"7", "num_2"=>"11", "num_3"=>"3", "quote"=>"Research is what I'm doing when I don't know what I'm doing."}
@@ -274,3 +279,6 @@ end
 
 # p pull_record("11")
 # {"id"=>"4", "name"=>"Jill", "age"=>"71", "details_id"=>"4", "num_1"=>"11", "num_2"=>"22", "num_3"=>"33", "quote"=>"It does not matter how slowly you go as long as you do not stop."}
+
+# p pull_record("nothing")
+# {"value"=>"No matching record - please try again."}
