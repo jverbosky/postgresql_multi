@@ -1,14 +1,32 @@
-<div class="padding">
-  <!-- dynamic table to list all users in personal_details.db -->
-  <table>
-    <% names.each_slice(3).to_a.each do |group| %>
+<div>
+
+  <h4>Please select the record to update.</h4>
+
+  <div class="padding">
+    <!-- dynamic table to list all users in personal_details.db -->
+    <table>
       <tr>
-      <% group.each do |person| %>
+        <td class="results"><b>Name</b></td>
+        <td class="results"><b>Age</b></td>
+        <td class="results"><b>N1</b></td>
+        <td class="results"><b>N2</b></td>
+        <td class="results"><b>N3</b></td>
+        <td class="results"><b>Quote</b></td>
+      </tr>
+      <% results.each do |result| %>
+      <tr>
+        <% person = result["name"] %>
         <% person.include? " " ? name = person.gsub(" ", "%20") : name = person %>
         <% url = "/user_info?name=" + name %>
-        <td class="narrow"><a href=<%= url %>><%= person %></a></td>
-      <% end %>
+        <td class="results"><a href=<%= url %>><%= person %></a></td>
+        <td class="results"><%= result["age"] %></td>
+        <td class="results"><%= result["num_1"] %></td>
+        <td class="results"><%= result["num_2"] %></td>
+        <td class="results"><%= result["num_3"] %></td>
+        <td class="results"><%= result["quote"] %></td>
       </tr>
-    <% end %>
-  </table>
+      <% end %>
+    </table>
+  </div>
+
 </div>

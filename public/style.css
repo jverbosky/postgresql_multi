@@ -74,3 +74,8 @@ tr:nth-child(odd) {
   width: 100px;
   padding: 8px;
 }
+
+.results {
+  vertical-align: top;
+  padding: 8px;
+}

@@ -160,10 +160,11 @@ def match_column(value)
 end
 
 # Method to return hash of all values for record associated with specified value
-def pull_record(value)
+def pull_records(value)
   begin
     column = match_column(value)  # determine which column contains the specified value
     unless column == ""
+      results = []  # array to hold all matching hashes
       conn = open_db()
       query = "select *
                from details
@@ -173,7 +174,8 @@ def pull_record(value)
       conn.prepare('q_statement', query)
       rs = conn.exec_prepared('q_statement', [value])
       conn.exec("deallocate q_statement")
-      return rs[0]
+      rs.each { |result| results.push(result) }
+      return results
     else
       return {"value" => "No matching record - please try again."}
     end
@@ -271,14 +273,14 @@ end
 # p match_column("11")  # "num_1"
 # p match_column("nothing")  #  ""
 
-# p pull_record("John")
+# p pull_records("John")
 # {"id"=>"1", "name"=>"John", "age"=>"41", "details_id"=>"1", "num_1"=>"7", "num_2"=>"11", "num_3"=>"3", "quote"=>"Research is what I'm doing when I don't know what I'm doing."}
 
-# p pull_record("If you fell down yesterday, stand up today.")
+# p pull_records("If you fell down yesterday, stand up today.")
 # {"id"=>"6", "name"=>"Jen", "age"=>"91", "details_id"=>"6", "num_1"=>"2", "num_2"=>"4", "num_3"=>"6", "quote"=>"If you fell down yesterday, stand up today."}
 
-# p pull_record("11")
+# p pull_records("11")
 # {"id"=>"4", "name"=>"Jill", "age"=>"71", "details_id"=>"4", "num_1"=>"11", "num_2"=>"22", "num_3"=>"33", "quote"=>"It does not matter how slowly you go as long as you do not stop."}
 
-# p pull_record("nothing")
+# p pull_records("nothing")
 # {"value"=>"No matching record - please try again."}

@@ -54,11 +54,10 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
     erb :search
   end
 
-  post '/post_search' do
+  post '/search_results' do
     value = params[:value]
-    results = pull_record(value)
-    "Results hash: #{results}"
-    # erb :search_results
+    results = pull_records(value)  # get array of hashes for all matching records
+    erb :search_results, locals: {results: results}
   end
 
 
