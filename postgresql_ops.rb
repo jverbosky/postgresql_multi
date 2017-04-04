@@ -133,7 +133,7 @@ def write_db(user_hash)
   end
 end
 
-# Method to identify which column contains the specified value
+# Method to identify which column contains specified value
 def match_column(value)
   begin
     columns = ["name", "num_1", "quote"]
@@ -159,54 +159,20 @@ def match_column(value)
   end
 end
 
-
-=begin
-
 # Method to return hash of all values for record associated with specified value
 def pull_record(value)
   begin
-
+    column = match_column(value)  # determine which column contains the specified value
     conn = open_db()
-    table = match_table(column)  # determine which table contains the specified column
-    conn.prepare('q_statement',
-                 "select *
-                  from details
-                  join numbers on details.id = numbers.details_id
-                  join quotes on details.id = quotes.details_id
-                  where details.name = '#{user_name}'")
-    user_hash = conn.exec_prepared('q_statement')
+    query = "select *
+             from details
+             join numbers on details.id = numbers.details_id
+             join quotes on details.id = quotes.details_id
+             where " + column + " = $1"  # bind parameter
+    conn.prepare('q_statement', query)
+    rs = conn.exec_prepared('q_statement', [value])
     conn.exec("deallocate q_statement")
-    return user_hash[0]
-
-
-      v_quote = user_hash["quote"]
-      conn.prepare('q_statement',
-                   "insert into details (id, name, age)
-                    values($1, $2, $3)")  # bind parameters
-      conn.exec_prepared('q_statement', [v_id, v_name, v_age])
-      conn.exec("deallocate q_statement")
-
-
-      query = "update " + table + " set " + column + " = $2 where id = $1"
-      conn.prepare('q_statement', query)
-      rs = conn.exec_prepared('q_statement', [id, value])
-
-
-    query = 
-
-    # id = columns["id"]  # determine the id for the current record
-    # conn = PG.connect(dbname: 'test', user: 'something', password: '4321')
-    # columns.each do |column, value|  # iterate through columns hash for each column/value pair
-    #   unless column == "id"  # we do NOT want to update the id
-    #     table = match_table(column)  # determine which table contains the specified column
-    #     # workaround for table name being quoted and column name used as bind parameter
-    #     query = "update " + table + " set " + column + " = $2 where id = $1"
-    #     conn.prepare('q_statement', query)
-    #     rs = conn.exec_prepared('q_statement', [id, value])
-    #     conn.exec("deallocate q_statement")
-    #   end
-    # end
-
+    return rs[0]
   rescue PG::Error => e
     puts 'Exception occurred'
     puts e.message
@@ -214,10 +180,6 @@ def pull_record(value)
     conn.close if conn
   end
 end
-
-=end
-
-
 
 # Method to identify which table contains the specified column
 def match_table(column)
@@ -229,7 +191,7 @@ def match_table(column)
       conn.prepare('q_statement',
                    "select column_name
                     from information_schema.columns
-                    where table_name = $1")
+                    where table_name = $1")  # bind parameter
       rs = conn.exec_prepared('q_statement', [table])
       conn.exec("deallocate q_statement")
       columns = rs.values.flatten
@@ -300,6 +262,15 @@ end
 # update_values(hash_1)
 # update_values(hash_2)
 
-p match_column("John")
-p match_column("If you fell down yesterday, stand up today.")
-p match_column("11")
+# p match_column("John")  # "name"
+# p match_column("If you fell down yesterday, stand up today.")  # "quote"
+# p match_column("11")  # "num_1"
+
+# p pull_record("John")
+# {"id"=>"1", "name"=>"John", "age"=>"41", "details_id"=>"1", "num_1"=>"7", "num_2"=>"11", "num_3"=>"3", "quote"=>"Research is what I'm doing when I don't know what I'm doing."}
+
+# p pull_record("If you fell down yesterday, stand up today.")
+# {"id"=>"6", "name"=>"Jen", "age"=>"91", "details_id"=>"6", "num_1"=>"2", "num_2"=>"4", "num_3"=>"6", "quote"=>"If you fell down yesterday, stand up today."}
+
+# p pull_record("11")
+# {"id"=>"4", "name"=>"Jill", "age"=>"71", "details_id"=>"4", "num_1"=>"11", "num_2"=>"22", "num_3"=>"33", "quote"=>"It does not matter how slowly you go as long as you do not stop."}
