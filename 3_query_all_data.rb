@@ -40,7 +40,7 @@ def get_data(user_name)
   # reference - example query to skip additional id columns in numbers and quotes
   # prepare data for iteration
   conn.prepare('q_statement',
-               "select details.id, name, age, num_1, num_2, num_3, quote
+               "select details.id, name, age, n1, n2, n3, quote
                from details
                join numbers on details.id = numbers.details_id
                join quotes on details.id = quotes.details_id")
@@ -69,9 +69,9 @@ def get_data(user_name)
   #     puts "Images ID: #{row['details_id']}"
   #     puts "Name: #{row['name']}"
   #     puts "Age: #{row['age']}"
-  #     puts "Favorite number 1: #{row['num_1']}"
-  #     puts "Favorite number 2: #{row['num_2']}"
-  #     puts "Favorite number 3: #{row['num_3']}"
+  #     puts "Favorite number 1: #{row['n1']}"
+  #     puts "Favorite number 2: #{row['n2']}"
+  #     puts "Favorite number 3: #{row['n3']}"
   #     puts "Quote: #{row['quote']}"
 
   # =begin

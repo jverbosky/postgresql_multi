@@ -60,5 +60,24 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
     erb :search_results, locals: {results: results}
   end
 
+  get '/get_update' do
+    name = params[:name]
+    user_hash = get_data(name)
+    erb :update_user, locals: {user_hash: user_hash}
+  end
+
+  post '/update_info' do
+    user_hash = params[:user]
+    update_values(user_hash)
+    name = user_hash["name"]  # user name from the resulting hash
+    age = user_hash["age"]  # user age from the resulting hash
+    n1 = user_hash["n1"]  # favorite number 1 from the resulting hash
+    n2 = user_hash["n2"]  # favorite number 2 from the resulting hash
+    n3 = user_hash["n3"]  # favorite number 3 from the resulting hash
+    total = sum(n1, n2, n3)
+    comparison = compare(total, age)
+    quote = user_hash["quote"]  # quote from the resulting hash
+    erb :get_more_info, locals: {name: name, age: age, n1: n1, n2: n2, n3: n3, total: total, comparison: comparison, quote: quote}
+  end
 
 end

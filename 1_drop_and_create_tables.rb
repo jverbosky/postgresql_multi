@@ -39,9 +39,9 @@ begin
   conn.exec "create table numbers (
              id int primary key,
              details_id int,
-             num_1 int,
-             num_2 int,
-             num_3 int)"
+             n1 int,
+             n2 int,
+             n3 int)"
 
   # drop quotes table if it exists
   conn.exec "drop table if exists quotes"

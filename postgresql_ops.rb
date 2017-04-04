@@ -105,9 +105,9 @@ def write_db(user_hash)
       max_id["max"] == nil ? v_id = 1 : v_id = max_id["max"].to_i + 1  # set index variable based on current max index value
       v_name = user_hash["name"]  # prepare data from user_hash for database insert
       v_age = user_hash["age"]
-      v_num_1 = user_hash["n1"]
-      v_num_2 = user_hash["n2"]
-      v_num_3 = user_hash["n3"]
+      v_n1 = user_hash["n1"]
+      v_n2 = user_hash["n2"]
+      v_n3 = user_hash["n3"]
       v_quote = user_hash["quote"]
       conn.prepare('q_statement',
                    "insert into details (id, name, age)
@@ -115,9 +115,9 @@ def write_db(user_hash)
       conn.exec_prepared('q_statement', [v_id, v_name, v_age])
       conn.exec("deallocate q_statement")
       conn.prepare('q_statement',
-                   "insert into numbers (id, details_id, num_1, num_2, num_3)
+                   "insert into numbers (id, details_id, n1, n2, n3)
                     values($1, $2, $3, $4, $5)")  # bind parameters
-      conn.exec_prepared('q_statement', [v_id, v_id, v_num_1, v_num_2, v_num_3])
+      conn.exec_prepared('q_statement', [v_id, v_id, v_n1, v_n2, v_n3])
       conn.exec("deallocate q_statement")
       conn.prepare('q_statement',
                    "insert into quotes (id, details_id, quote)
@@ -136,7 +136,7 @@ end
 # Method to identify which column contains specified value
 def match_column(value)
   begin
-    columns = ["name", "num_1", "quote"]
+    columns = ["name", "n1", "quote"]
     target = ""
     conn = open_db() # open database for updating
     columns.each do |column|  # determine which column contains the specified value
@@ -260,27 +260,31 @@ end
 
 # p match_table("age")
 # p match_table("quote")
-# p match_table("num_3")
+# p match_table("n3")
 
-# hash_1 = {"id" => "3", "age" => "74", "num_1" => "100", "quote" => "Set your goals high, and don't stop till you get there."}
-# hash_2 = {"age" => "93", "num_3" => "77", "id" => "6", "quote" => "The harder the conflict, the more glorious the triumph."}
+# hash_1 = {"id" => "3", "age" => "74", "n1" => "100", "quote" => "Set your goals high, and don't stop till you get there."}
+# hash_2 = {"age" => "93", "n3" => "77", "id" => "6", "quote" => "The harder the conflict, the more glorious the triumph."}
+# hash_2 = {"name"=>"Fred", "age" => "93", "n1" => "8", "n2" => "9", "n3" => "10", "id" => "6", "quote" => "Let's try that again."}
+# hash_2 = {"name"=>"Jen", "age" => "91", "n1" => "2", "n2" => "4", "n3" => "6", "id" => "6", "quote" => "If you fell down yesterday, stand up today."}
+# hash_3 = {"name"=>"Pope John Paul", "age"=>"82", "n1"=>"10", "n2"=>"20", "n3"=>"820", "quote"=>"Kiss the ring.", "id"=>"9"}
 
 # update_values(hash_1)
 # update_values(hash_2)
+# update_values(hash_3)
 
 # p match_column("John")  # "name"
 # p match_column("If you fell down yesterday, stand up today.")  # "quote"
-# p match_column("11")  # "num_1"
+# p match_column("11")  # "n1"
 # p match_column("nothing")  #  ""
 
 # p pull_records("John")
-# {"id"=>"1", "name"=>"John", "age"=>"41", "details_id"=>"1", "num_1"=>"7", "num_2"=>"11", "num_3"=>"3", "quote"=>"Research is what I'm doing when I don't know what I'm doing."}
+# {"id"=>"1", "name"=>"John", "age"=>"41", "details_id"=>"1", "n1"=>"7", "n2"=>"11", "n3"=>"3", "quote"=>"Research is what I'm doing when I don't know what I'm doing."}
 
 # p pull_records("If you fell down yesterday, stand up today.")
-# {"id"=>"6", "name"=>"Jen", "age"=>"91", "details_id"=>"6", "num_1"=>"2", "num_2"=>"4", "num_3"=>"6", "quote"=>"If you fell down yesterday, stand up today."}
+# {"id"=>"6", "name"=>"Jen", "age"=>"91", "details_id"=>"6", "n1"=>"2", "n2"=>"4", "n3"=>"6", "quote"=>"If you fell down yesterday, stand up today."}
 
 # p pull_records("11")
-# {"id"=>"4", "name"=>"Jill", "age"=>"71", "details_id"=>"4", "num_1"=>"11", "num_2"=>"22", "num_3"=>"33", "quote"=>"It does not matter how slowly you go as long as you do not stop."}
+# {"id"=>"4", "name"=>"Jill", "age"=>"71", "details_id"=>"4", "n1"=>"11", "n2"=>"22", "n3"=>"33", "quote"=>"It does not matter how slowly you go as long as you do not stop."}
 
 # p pull_records("nothing")
 # {"value"=>"No matching record - please try again."}

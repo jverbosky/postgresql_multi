@@ -17,16 +17,18 @@
       <tr>
         <% person = result["name"] %>
         <% person.include? " " ? name = person.gsub(" ", "%20") : name = person %>
-        <% url = "/user_info?name=" + name %>
+        <% url = "/get_update?name=" + name %>
         <td class="results"><a href=<%= url %>><%= person %></a></td>
         <td class="results"><%= result["age"] %></td>
-        <td class="results"><%= result["num_1"] %></td>
-        <td class="results"><%= result["num_2"] %></td>
-        <td class="results"><%= result["num_3"] %></td>
+        <td class="results"><%= result["n1"] %></td>
+        <td class="results"><%= result["n2"] %></td>
+        <td class="results"><%= result["n3"] %></td>
         <td class="results"><%= result["quote"] %></td>
       </tr>
       <% end %>
     </table>
   </div>
+
+  <hr>
 
 </div>

@@ -48,9 +48,9 @@ begin
     # initialize variables for SQL insert statements
     v_name = user[0]
     v_age = user[1]
-    v_num_1 = user[2]
-    v_num_2 = user[3]
-    v_num_3 = user[4]
+    v_n1 = user[2]
+    v_n2 = user[3]
+    v_n3 = user[4]
     v_quote = user[5]
 
 =begin
@@ -73,11 +73,11 @@ begin
 
     # prepare SQL statement to insert favorite numbers into numbers table
     conn.prepare('q_statement',
-                 "insert into numbers (id, details_id, num_1, num_2, num_3)
+                 "insert into numbers (id, details_id, n1, n2, n3)
                   values($1, $2, $3, $4, $5)")  # bind parameters
 
     # execute prepared SQL statement
-    conn.exec_prepared('q_statement', [v_id, v_id, v_num_1, v_num_2, v_num_3])
+    conn.exec_prepared('q_statement', [v_id, v_id, v_n1, v_n2, v_n3])
 
     # deallocate prepared statement variable (avoid error "prepared statement already exists")
     conn.exec("deallocate q_statement")
