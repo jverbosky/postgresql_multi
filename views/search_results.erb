@@ -1,0 +1,14 @@
+<div class="padding">
+  <!-- dynamic table to list all users in personal_details.db -->
+  <table>
+    <% names.each_slice(3).to_a.each do |group| %>
+      <tr>
+      <% group.each do |person| %>
+        <% person.include? " " ? name = person.gsub(" ", "%20") : name = person %>
+        <% url = "/user_info?name=" + name %>
+        <td class="narrow"><a href=<%= url %>><%= person %></a></td>
+      <% end %>
+      </tr>
+    <% end %>
+  </table>
+</div>
