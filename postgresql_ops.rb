@@ -20,7 +20,7 @@ def open_db()
   end
 end
 
-# Method to return user hash from SQLite db for specified user
+# Method to return user hash from PostgreSQL db for specified user
 def get_data(user_name)
   begin
     conn = open_db()
