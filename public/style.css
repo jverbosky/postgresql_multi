@@ -39,6 +39,11 @@ tr:nth-child(odd) {
   background-color: #a5c1ef;
 }
 
+img {
+  max-width: 150px;
+  height: auto;
+}
+
 .center-block {
   display: block;
   margin-left: auto;

@@ -77,7 +77,6 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
 
   post '/update_info' do
     user_hash = params[:user]
-    "#{user_hash}"
     update_values(user_hash)
     write_image(user_hash)
     name = user_hash["name"]  # user name from the resulting hash
