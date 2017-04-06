@@ -1,4 +1,5 @@
 require 'pg'
+require 'fileutils'
 load "./local_env.rb" if File.exists?("./local_env.rb")
 
 # Method to open a connection to the PostgreSQL database
@@ -105,14 +106,15 @@ def write_db(user_hash)
       max_id["max"] == nil ? v_id = 1 : v_id = max_id["max"].to_i + 1  # set index variable based on current max index value
       v_name = user_hash["name"]  # prepare data from user_hash for database insert
       v_age = user_hash["age"]
+      v_image = user_hash["image"][:filename]
       v_n1 = user_hash["n1"]
       v_n2 = user_hash["n2"]
       v_n3 = user_hash["n3"]
       v_quote = user_hash["quote"]
       conn.prepare('q_statement',
-                   "insert into details (id, name, age)
-                    values($1, $2, $3)")  # bind parameters
-      conn.exec_prepared('q_statement', [v_id, v_name, v_age])
+                   "insert into details (id, name, age, image)
+                    values($1, $2, $3, $4)")  # bind parameters
+      conn.exec_prepared('q_statement', [v_id, v_name, v_age, v_image])
       conn.exec("deallocate q_statement")
       conn.prepare('q_statement',
                    "insert into numbers (id, details_id, n1, n2, n3)
@@ -124,6 +126,30 @@ def write_db(user_hash)
                     values($1, $2, $3)")  # bind parameters
       conn.exec_prepared('q_statement', [v_id, v_id, v_quote])
       conn.exec("deallocate q_statement")
+    rescue PG::Error => e
+      puts 'Exception occurred'
+      puts e.message
+    ensure
+      conn.close if conn
+    end
+  end
+end
+
+def write_image(user_hash)
+  feedback = check_values(user_hash)
+  if feedback == ""
+    begin
+      conn = open_db() # open database for updating
+      max_id = conn.exec("select max(id) from details")[0]  # determine current max index (id) in details table
+      max_id["max"] == nil ? v_id = 1 : v_id = max_id["max"].to_i + 1  # set index variable based on current max index value
+      image_path = "./public/images/uploads/#{v_id}"
+      unless File.directory?(image_path)  # create directory for image
+        FileUtils.mkdir_p(image_path)
+      end
+      image = File.binread(user_hash["image"][:tempfile])  # open image file
+      f = File.new "#{image_path}/#{user_hash["image"][:filename]}", "wb"
+      f.write(image)
+      f.close if f
     rescue PG::Error => e
       puts 'Exception occurred'
       puts e.message
@@ -188,9 +214,8 @@ end
 def get_image(value)
   user_hash = pull_records(value)
   id = user_hash[0]["id"]
-  image_dir = "images/uploads/#{id}/"
-  image_name = "user_#{id}.png"
-  image = image_dir + image_name
+  image_name = user_hash[0]["image"]
+  image = "images/uploads/#{id}/#{image_name}"
 end
 
 # Method to identify which table contains the specified column
@@ -290,10 +315,19 @@ end
 # [{"id"=>"6", "name"=>"Jen", "age"=>"91", "details_id"=>"6", "n1"=>"2", "n2"=>"4", "n3"=>"6", "quote"=>"If you fell down yesterday, stand up today."}]
 
 # p pull_records("10")
-# [{"id"=>"3", "name"=>"Jim", "age"=>"61", "details_id"=>"3", "n1"=>"10", "n2"=>"20", "n3"=>"30", "quote"=>"In order to succeed, we must first believe that we can."}, 
+# [{"id"=>"3", "name"=>"Jim", "age"=>"61", "details_id"=>"3", "n1"=>"10", "n2"=>"20", "n3"=>"30", "quote"=>"In order to succeed, we must first believe that we can."},
 #  {"id"=>"9", "name"=>"Joni", "age"=>"40", "details_id"=>"9", "n1"=>"10", "n2"=>"50", "n3"=>"80", "quote"=>"Think big."}]
 
 # p pull_records("nothing")
 # [{"quote"=>"No matching record - please try again."}]
 
 # p get_image("John")  # "images/uploads/1/user_1.png"
+
+# def create_directory()
+#     image_path = "./public/images/uploads/10"
+#     unless File.directory?(image_path)  # create directory for image
+#       FileUtils.mkdir_p(image_path)
+#     end
+# end
+
+# create_directory()

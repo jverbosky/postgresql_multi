@@ -30,7 +30,8 @@ begin
   conn.exec "create table details (
              id int primary key,
              name varchar(50),
-             age int)"
+             age int,
+             image varchar(50))"
 
   # drop numbers table if it exists
   conn.exec "drop table if exists numbers"
