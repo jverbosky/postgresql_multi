@@ -255,8 +255,8 @@ def update_values(user_hash)
     user_hash.each do |column, value|  # iterate through user_hash for each column/value pair
       unless column == "id"  # we do NOT want to update the id
         table = match_table(column)  # determine which table contains the specified column
-        # workaround for table name being quoted and column name used as bind parameter
         value = get_image_name(user_hash) if column == "image"  # get image name from nested array
+        # workaround for table name being quoted and column name used as bind parameter
         query = "update " + table + " set " + column + " = $2 where id = $1"
         conn.prepare('q_statement', query)
         rs = conn.exec_prepared('q_statement', [id, value])
