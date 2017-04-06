@@ -142,8 +142,7 @@ def match_column(value)
     columns.each do |column|  # determine which column contains the specified value
       query = "select " + column +
               " from details
-               join numbers on details.id = numbers.details_id
-               join quotes on details.id = quotes.details_id"
+               join numbers on details.id = numbers.details_id"
       conn.prepare('q_statement', query)
       rs = conn.exec_prepared('q_statement')
       conn.exec("deallocate q_statement")
@@ -169,7 +168,6 @@ def pull_records(value)
       query = "select *
                from details
                join numbers on details.id = numbers.details_id
-               join quotes on details.id = quotes.details_id
                where " + column + " = $1"  # bind parameter
       conn.prepare('q_statement', query)
       rs = conn.exec_prepared('q_statement', [value])
@@ -185,6 +183,14 @@ def pull_records(value)
   ensure
     conn.close if conn
   end
+end
+
+def get_image(value)
+  user_hash = pull_records(value)
+  id = user_hash[0]["id"]
+  image_dir = "images/uploads/#{id}/"
+  image_name = "user_#{id}.png"
+  image = image_dir + image_name
 end
 
 # Method to identify which table contains the specified column
@@ -289,3 +295,5 @@ end
 
 # p pull_records("nothing")
 # [{"quote"=>"No matching record - please try again."}]
+
+# p get_image("John")  # "images/uploads/1/user_1.png"

@@ -47,7 +47,8 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
   get '/user_info' do
     name = params[:name]  # get the specified name from the url in list_users.erb (url = "/user_info?name=" + name)
     user_hash = get_data(name)  # get the hash of info for the specified user
-    erb :user_info, locals: {user_hash: user_hash}
+    image = get_image(name)  # get the image path and name
+    erb :user_info, locals: {user_hash: user_hash, image: image}
   end
 
   get '/get_search' do
