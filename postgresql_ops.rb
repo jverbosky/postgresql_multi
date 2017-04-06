@@ -163,12 +163,13 @@ def match_column(value)
     columns.each do |column|  # determine which column contains the specified value
       query = "select " + column +
               " from details
-               join numbers on details.id = numbers.details_id"
+               join numbers on details.id = numbers.details_id
+               join quotes on details.id = quotes.details_id"
       conn.prepare('q_statement', query)
       rs = conn.exec_prepared('q_statement')
       conn.exec("deallocate q_statement")
       results = rs.values.flatten
-      (results.include? value) ? (return column) : (target = "")
+      results.each { |e| return column if e =~ /#{value}/i }
     end
     return target
   rescue PG::Error => e
@@ -190,9 +191,9 @@ def pull_records(value)
                from details
                join numbers on details.id = numbers.details_id
                join quotes on details.id = quotes.details_id
-               where " + column + " = $1"  # bind parameter
+               where " + column + " ilike $1"  # bind parameter
       conn.prepare('q_statement', query)
-      rs = conn.exec_prepared('q_statement', [value])
+      rs = conn.exec_prepared('q_statement', ["%" + value + "%"])
       conn.exec("deallocate q_statement")
       rs.each { |result| results.push(result) }
       return results
