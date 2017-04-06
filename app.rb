@@ -33,9 +33,7 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
     total = sum(n1, n2, n3)
     comparison = compare(total, age)
     quote = user_hash["quote"]  # quote from the resulting hash
-    image = user_hash["image"][:filename]
     if feedback == ""  # if there's no feedback on user already being in db, use the get_more_info view
-      avatar = get_image(name)  # get the image for the specified user
       erb :get_more_info, locals: {name: name, age: age, n1: n1, n2: n2, n3: n3, total: total, comparison: comparison, quote: quote, image: image}
     else
       # otherwise reload the get_info view with feedback and user-specified values so they can correct and resubmit
