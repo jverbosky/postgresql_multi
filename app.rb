@@ -27,7 +27,7 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
       write_image(user_hash)
       name = user_hash["name"]  # user name from the resulting hash
       age = user_hash["age"]  # user age from the resulting hash
-      image = get_image(name)  # get the image path and name
+      image = pull_image(name)  # get the image path and name
       n1 = user_hash["n1"]  # favorite number 1 from the resulting hash
       n2 = user_hash["n2"]  # favorite number 2 from the resulting hash
       n3 = user_hash["n3"]  # favorite number 3 from the resulting hash
@@ -49,7 +49,7 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
   get '/user_info' do
     name = params[:name]  # get the specified name from the url in list_users.erb (url = "/user_info?name=" + name)
     user_hash = get_data(name)  # get the hash of info for the specified user
-    image = get_image(name)  # get the image path and name
+    image = pull_image(name)  # get the image path and name
     erb :user_info, locals: {user_hash: user_hash, image: image}
   end
 
@@ -77,16 +77,19 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
 
   post '/update_info' do
     user_hash = params[:user]
+    "#{user_hash}"
     update_values(user_hash)
+    write_image(user_hash)
     name = user_hash["name"]  # user name from the resulting hash
     age = user_hash["age"]  # user age from the resulting hash
+    image = pull_image(name)  # get the image path and name
     n1 = user_hash["n1"]  # favorite number 1 from the resulting hash
     n2 = user_hash["n2"]  # favorite number 2 from the resulting hash
     n3 = user_hash["n3"]  # favorite number 3 from the resulting hash
     total = sum(n1, n2, n3)
     comparison = compare(total, age)
     quote = user_hash["quote"]  # quote from the resulting hash
-    erb :get_more_info, locals: {name: name, age: age, n1: n1, n2: n2, n3: n3, total: total, comparison: comparison, quote: quote}
+    erb :get_more_info, locals: {name: name, age: age, n1: n1, n2: n2, n3: n3, total: total, comparison: comparison, quote: quote, image: image}
   end
 
 end

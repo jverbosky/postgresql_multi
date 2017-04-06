@@ -189,6 +189,7 @@ def pull_records(value)
       query = "select *
                from details
                join numbers on details.id = numbers.details_id
+               join quotes on details.id = quotes.details_id
                where " + column + " = $1"  # bind parameter
       conn.prepare('q_statement', query)
       rs = conn.exec_prepared('q_statement', [value])
@@ -206,7 +207,8 @@ def pull_records(value)
   end
 end
 
-def get_image(value)
+# Method got define image path and name
+def pull_image(value)
   user_hash = pull_records(value)
   id = user_hash[0]["id"]
   image_name = user_hash[0]["image"]
@@ -238,17 +240,23 @@ def match_table(column)
   end
 end
 
+# Method to extract image name from nested image array in user hash
+def get_image_name(user_hash)
+  image_name = user_hash["image"][:filename]
+end
+
 # Method to update any number of values in any number of tables
-# - columns hash needs to contain id of current record that needs to be updated
+# - user hash needs to contain id of current record that needs to be updated
 # - order is not important (the id can be anywhere in the hash)
-def update_values(columns)
+def update_values(user_hash)
   begin
-    id = columns["id"]  # determine the id for the current record
+    id = user_hash["id"]  # determine the id for the current record
     conn = open_db() # open database for updating
-    columns.each do |column, value|  # iterate through columns hash for each column/value pair
+    user_hash.each do |column, value|  # iterate through user_hash for each column/value pair
       unless column == "id"  # we do NOT want to update the id
         table = match_table(column)  # determine which table contains the specified column
         # workaround for table name being quoted and column name used as bind parameter
+        value = get_image_name(user_hash) if column == "image"  # get image name from nested array
         query = "update " + table + " set " + column + " = $2 where id = $1"
         conn.prepare('q_statement', query)
         rs = conn.exec_prepared('q_statement', [id, value])
@@ -316,7 +324,7 @@ end
 # p pull_records("nothing")
 # [{"quote"=>"No matching record - please try again."}]
 
-# p get_image("John")  # "images/uploads/1/user_1.png"
+# p pull_image("John")  # "images/uploads/1/user_1.png"
 
 # def create_directory()
 #     image_path = "./public/images/uploads/10"
@@ -326,3 +334,9 @@ end
 # end
 
 # create_directory()
+
+# user_hash = {"name"=>"Luma", "age"=>"4", "n1"=>"1", "n2"=>"2", "n3"=>"3", "quote"=>"Woof!", "image"=>{:filename=>"luma2.png", :type=>"image/png", :name=>"user[image]", :tempfile=>0, :head=>"Content-Disposition: form-data; name=\"user[image]\"; filename=\"luma2.png\"\r\nContent-Type: image/png\r\n"}, "id"=>"8"}
+
+# p get_image_name(user_hash)
+
+# update_values(user_hash)
