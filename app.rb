@@ -22,18 +22,18 @@ class PersonalDetailsPostgreSQLApp < Sinatra::Base
   post '/post_info' do
     user_hash = params[:user]  # assign the user hash to the user_hash variable
     feedback = check_values(user_hash)  # check to see if user is already in PostgreSQL db
-    write_db(user_hash)  # if not, add user info to db
-    write_image(user_hash)
-    name = user_hash["name"]  # user name from the resulting hash
-    age = user_hash["age"]  # user age from the resulting hash
-    image = get_image(name)  # get the image path and name
-    n1 = user_hash["n1"]  # favorite number 1 from the resulting hash
-    n2 = user_hash["n2"]  # favorite number 2 from the resulting hash
-    n3 = user_hash["n3"]  # favorite number 3 from the resulting hash
-    total = sum(n1, n2, n3)
-    comparison = compare(total, age)
-    quote = user_hash["quote"]  # quote from the resulting hash
     if feedback == ""  # if there's no feedback on user already being in db, use the get_more_info view
+      write_db(user_hash)  # if not, add user info to db
+      write_image(user_hash)
+      name = user_hash["name"]  # user name from the resulting hash
+      age = user_hash["age"]  # user age from the resulting hash
+      image = get_image(name)  # get the image path and name
+      n1 = user_hash["n1"]  # favorite number 1 from the resulting hash
+      n2 = user_hash["n2"]  # favorite number 2 from the resulting hash
+      n3 = user_hash["n3"]  # favorite number 3 from the resulting hash
+      total = sum(n1, n2, n3)
+      comparison = compare(total, age)
+      quote = user_hash["quote"]  # quote from the resulting hash
       erb :get_more_info, locals: {name: name, age: age, n1: n1, n2: n2, n3: n3, total: total, comparison: comparison, quote: quote, image: image}
     else
       # otherwise reload the get_info view with feedback and user-specified values so they can correct and resubmit

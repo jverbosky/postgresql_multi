@@ -98,65 +98,59 @@ end
 
 # Method to add current user hash to db
 def write_db(user_hash)
-  feedback = check_values(user_hash)
-  if feedback == ""
-    begin
-      conn = open_db() # open database for updating
-      max_id = conn.exec("select max(id) from details")[0]  # determine current max index (id) in details table
-      max_id["max"] == nil ? v_id = 1 : v_id = max_id["max"].to_i + 1  # set index variable based on current max index value
-      v_name = user_hash["name"]  # prepare data from user_hash for database insert
-      v_age = user_hash["age"]
-      v_image = user_hash["image"][:filename]
-      v_n1 = user_hash["n1"]
-      v_n2 = user_hash["n2"]
-      v_n3 = user_hash["n3"]
-      v_quote = user_hash["quote"]
-      conn.prepare('q_statement',
-                   "insert into details (id, name, age, image)
-                    values($1, $2, $3, $4)")  # bind parameters
-      conn.exec_prepared('q_statement', [v_id, v_name, v_age, v_image])
-      conn.exec("deallocate q_statement")
-      conn.prepare('q_statement',
-                   "insert into numbers (id, details_id, n1, n2, n3)
-                    values($1, $2, $3, $4, $5)")  # bind parameters
-      conn.exec_prepared('q_statement', [v_id, v_id, v_n1, v_n2, v_n3])
-      conn.exec("deallocate q_statement")
-      conn.prepare('q_statement',
-                   "insert into quotes (id, details_id, quote)
-                    values($1, $2, $3)")  # bind parameters
-      conn.exec_prepared('q_statement', [v_id, v_id, v_quote])
-      conn.exec("deallocate q_statement")
-    rescue PG::Error => e
-      puts 'Exception occurred'
-      puts e.message
-    ensure
-      conn.close if conn
-    end
+  begin
+    conn = open_db() # open database for updating
+    max_id = conn.exec("select max(id) from details")[0]  # determine current max index (id) in details table
+    max_id["max"] == nil ? v_id = 1 : v_id = max_id["max"].to_i + 1  # set index variable based on current max index value
+    v_name = user_hash["name"]  # prepare data from user_hash for database insert
+    v_age = user_hash["age"]
+    v_image = user_hash["image"][:filename]
+    v_n1 = user_hash["n1"]
+    v_n2 = user_hash["n2"]
+    v_n3 = user_hash["n3"]
+    v_quote = user_hash["quote"]
+    conn.prepare('q_statement',
+                 "insert into details (id, name, age, image)
+                  values($1, $2, $3, $4)")  # bind parameters
+    conn.exec_prepared('q_statement', [v_id, v_name, v_age, v_image])
+    conn.exec("deallocate q_statement")
+    conn.prepare('q_statement',
+                 "insert into numbers (id, details_id, n1, n2, n3)
+                  values($1, $2, $3, $4, $5)")  # bind parameters
+    conn.exec_prepared('q_statement', [v_id, v_id, v_n1, v_n2, v_n3])
+    conn.exec("deallocate q_statement")
+    conn.prepare('q_statement',
+                 "insert into quotes (id, details_id, quote)
+                  values($1, $2, $3)")  # bind parameters
+    conn.exec_prepared('q_statement', [v_id, v_id, v_quote])
+    conn.exec("deallocate q_statement")
+  rescue PG::Error => e
+    puts 'Exception occurred'
+    puts e.message
+  ensure
+    conn.close if conn
   end
 end
 
 def write_image(user_hash)
-  feedback = check_values(user_hash)
-  if feedback == ""
-    begin
-      conn = open_db() # open database for updating
-      max_id = conn.exec("select max(id) from details")[0]  # determine current max index (id) in details table
-      max_id["max"] == nil ? v_id = 1 : v_id = max_id["max"].to_i  # set index variable based on current max index value
-      image_path = "./public/images/uploads/#{v_id}"
-      unless File.directory?(image_path)  # create directory for image
-        FileUtils.mkdir_p(image_path)
-      end
-      image = File.binread(user_hash["image"][:tempfile])  # open image file
-      f = File.new "#{image_path}/#{user_hash["image"][:filename]}", "wb"
-      f.write(image)
-      f.close if f
-      return "#{image_path}/#{user_hash["image"][:filename]}"
-    rescue PG::Error => e
-      puts 'Exception occurred'
-      puts e.message
-    ensure
-      conn.close if conn
+  begin
+    conn = open_db() # open database for updating
+    max_id = conn.exec("select max(id) from details")[0]  # determine current max index (id) in details table
+    max_id["max"] == nil ? v_id = 1 : v_id = max_id["max"].to_i  # set index variable based on current max index value
+    image_path = "./public/images/uploads/#{v_id}"
+    unless File.directory?(image_path)  # create directory for image
+      FileUtils.mkdir_p(image_path)
     end
+    image = File.binread(user_hash["image"][:tempfile])  # open image file
+    f = File.new "#{image_path}/#{user_hash["image"][:filename]}", "wb"
+    f.write(image)
+    f.close if f
+    return "#{image_path}/#{user_hash["image"][:filename]}"
+  rescue PG::Error => e
+    puts 'Exception occurred'
+    puts e.message
+  ensure
+    conn.close if conn
   end
 end
 
