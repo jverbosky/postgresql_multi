@@ -208,7 +208,7 @@ def pull_records(value)
   end
 end
 
-# Method got define image path and name
+# Method to define image path and name
 def pull_image(value)
   user_hash = pull_records(value)
   id = user_hash[0]["id"]
