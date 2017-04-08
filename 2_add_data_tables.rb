@@ -13,10 +13,15 @@ begin
   user_5 = ["June", 81, "user_5.png", 20, 40, 60, "Problems are not stop signs, they are guidelines."]
   user_6 = ["Jen", 91, "user_6.png", 2, 4, 6, "If you fell down yesterday, stand up today."]
   user_7 = ["Jeff", 101, "user_7.png", 37, 47, 87, "The way to get started is to quit talking and begin doing."]
+  user_8 = ["Luma", 4, "luma2.png", 1, 2, 3, "Woof!"]
+  user_9 = ["Joe McKenzie", 32, "20170315_235045.jpg", 69, 420, 1000000, "Sweet muffins"]
+  user_10 = ["Tanchan", 12, "tan-chan.png", 2, 4, 6, "Food - anything for food!"]
+  user_11 = ["Nemo", 10, "nemo.png", 1, 2, 9, "I'm a loner, Dotty... a rebel."]
 
   # aggregate user data into multi-dimensional array for iteration
   users = []
-  users.push(user_1, user_2, user_3, user_4, user_5, user_6, user_7)
+  users.push(user_1, user_2, user_3, user_4, user_5, user_6, user_7, user_8,
+             user_9, user_10, user_11)
 
   # connect to the database
   db_params = {

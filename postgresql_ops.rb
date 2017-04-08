@@ -191,7 +191,8 @@ def pull_records(value)
                from details
                join numbers on details.id = numbers.details_id
                join quotes on details.id = quotes.details_id
-               where " + column + " ilike $1"  # bind parameter
+               where " + column + " ilike $1
+               order by name"
       conn.prepare('q_statement', query)
       rs = conn.exec_prepared('q_statement', ["%" + value + "%"])
       conn.exec("deallocate q_statement")
