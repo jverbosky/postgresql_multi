@@ -1,5 +1,6 @@
 require 'pg'
 require 'fileutils'
+require_relative 'file_validation.rb'
 load "./local_env.rb" if File.exists?("./local_env.rb")
 
 # Method to open a connection to the PostgreSQL database
@@ -71,6 +72,12 @@ def get_names()
   end
 end
 
+def file_validation(user_hash)
+  file_hash = user_hash[:image]
+  file_check = FileValidation.new
+  file_check.validate_file(file_hash)
+end
+
 # Method to determine if value is too long or if user in current user hash is already in JSON file
 def check_values(user_hash)
   flag = 0
@@ -85,6 +92,7 @@ def check_values(user_hash)
   end
   users = get_names()
   users.each { |user| flag = 1 if user == user_hash["name"]}
+  flag = 7 if file_validation(user_hash) == false
   case flag
     when 1 then feedback = "We already have details for that person - please enter a different person."
     when 2 then feedback = "I don't think you're really that old - please try again."
@@ -92,6 +100,7 @@ def check_values(user_hash)
     when 4 then feedback = "Your quote is too long - please try again with a shorter value."
     when 5 then feedback = "Your name should only contain letters - please try again."
     when 6 then feedback = "The value for '#{detail}' should only have numbers - please try again."
+    when 7 then feedback = "Invalid image file - please upload a valid image in BMP, GIF, JPG, PNG or TIFF format."
   end
   return feedback
 end
