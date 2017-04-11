@@ -72,7 +72,7 @@ def get_names()
   end
 end
 
-def file_validation(user_hash)
+def validate_file(user_hash)
   file_hash = user_hash[:image]
   file_check = FileValidation.new
   file_check.validate_file(file_hash)
@@ -92,7 +92,7 @@ def check_values(user_hash)
   end
   users = get_names()
   users.each { |user| flag = 1 if user == user_hash["name"]}
-  flag = 7 if file_validation(user_hash) == false
+  flag = 7 if validate_file(user_hash) == false
   case flag
     when 1 then feedback = "We already have details for that person - please enter a different person."
     when 2 then feedback = "I don't think you're really that old - please try again."

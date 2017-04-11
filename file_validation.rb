@@ -4,32 +4,20 @@ class FileValidation
 
   def initialize
     @file_types = {
-      bmp:  "image/bmp",
       gif: "image/gif",
       jpg: "image/jpeg",
-      png: "image/png",
-      tiff: "image/tiff"
+      png: "image/png"
     }
     @file_ext = {
-      bmp: [".bmp", ".BMP"],
       gif: [".gif", ".GIF"],
       jpg: [".jpg", ".JPG", ".jpe", ".JPE", ".jpeg", ".JPEG"],
-      png: [".png", ".PNG"],
-      tiff: [".tif", ".TIF", ".tiff", ".TIFF"]
+      png: [".png", ".PNG"]
     }
     @file_data = {
-      bmp: "BM",
       gif: ["\x47\x49\x46\x38\x37\x61", "\x47\x49\x46\x38\x39\x61"],
       jpg: ["\xFF\xD8\xFF\xE0", "\xFF\xD8\xFF\xE1"],
-      png: ["\x89\x50\x4E\x47\x0D\x0A\x1A\x0A"],
-      tiff: ["\x4d\x4d\x00\x2a", "\x49\x49\x2a\x00"]
+      png: ["\x89\x50\x4E\x47\x0D\x0A\x1A\x0A"]
     }
-  end
-
-  def bmp?(details)
-    (@file_types[:bmp] == details[:type]) &&
-    (@file_ext[:bmp].include? details[:ext]) &&
-    (@file_data[:bmp] == details[:data][0, 2])
   end
 
   def gif?(details)
@@ -50,12 +38,6 @@ class FileValidation
     (@file_data[:png].include? details[:data])
   end
 
-  def tiff?(details)
-    (@file_types[:tiff] == details[:type]) &&
-    (@file_ext[:tiff].include? details[:ext]) &&
-    (@file_data[:tiff].include? details[:data][0, 4])
-  end
-
   def get_details(file_hash)
     details = {}
     details[:type] = file_hash[:type]
@@ -67,7 +49,7 @@ class FileValidation
 
   def validate_file(file_hash)
     details = get_details(file_hash)
-    bmp?(details) || gif?(details) || jpg?(details) || png?(details) || tiff?(details)
+    gif?(details) || jpg?(details) || png?(details)
   end
 
 end
