@@ -90,11 +90,11 @@ def check_values(user_hash)
     flag = 5 if key == "name" && value =~ /[^a-zA-Z ]/
     (flag = 6; detail = key) if key =~ /age|n1|n2|n3/ && value =~ /[^0-9.,]/
   end
-  users = get_names()
-  users.each { |user| flag = 1 if user == user_hash["name"]}
+  # users = get_names()
+  # users.each { |user| flag = 1 if user == user_hash["name"]}
   flag = 7 if validate_file(user_hash) == false
   case flag
-    when 1 then feedback = "We already have details for that person - please enter a different person."
+    # when 1 then feedback = "We already have details for that person - please enter a different person."
     when 2 then feedback = "I don't think you're really that old - please try again."
     when 3 then feedback = "The value for '#{detail}' is too long - please try again with a shorter value."
     when 4 then feedback = "Your quote is too long - please try again with a shorter value."
