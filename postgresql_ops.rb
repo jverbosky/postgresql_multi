@@ -78,6 +78,8 @@ def validate_file(user_hash)
   file_check.validate_file(file_hash)
 end
 
+# Validate user if new record?
+
 # Method to determine if value is too long or if user in current user hash is already in JSON file
 def check_values(user_hash)
   flag = 0
